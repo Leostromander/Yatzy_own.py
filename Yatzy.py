@@ -43,9 +43,14 @@ def player_selection():
                 for _ in range(number_of_players):
                     time_for_player_selection += 1
                     player_tag = ("Player" + str(time_for_player_selection))
-                    name = input("What is your name?: ")
-                    players.update({name: points})
-                    player_id.update({player_tag: name})
+                    while True:
+                        name = input("What is your name?: ")
+                        if players.get(name) == 0:
+                            print("That name has already been selected.")
+                        else:
+                            players.update({name: points})
+                            player_id.update({player_tag: name})
+                            break
                 break
             else:
                 print("Amount of players are not between 2 and 4.")
@@ -68,26 +73,26 @@ def turn():
     print(current_player + " you throw your dice and get these values:")
     dice()
     print(dice_list)
-    while True:
-        try:
-            for i in range(3):
-                if i < 2:
-                    dice_choice_answer = input("If you want to throw some dice again press 1, if not press 2: ") # Användaren uppmanas att ange vilka tärningar de vill kasta om.
-                    if dice_choice_answer == "1":
-                        dice_choice()
-                    elif dice_choice_answer == "2":
-                        break
-                else:
+    for i in range(3):
+        if i < 2:
+            while True:
+                dice_choice_answer = input("If you want to throw some dice again press 1, if not press 2: ") # Användaren uppmanas att ange vilka tärningar de vill kasta om.
+                if dice_choice_answer == "1":
+                    dice_choice()
+                elif dice_choice_answer == "2":
                     break
+                else:
+                    print("That is not an option.")
             break
-        except ValueError:
-            print("That is not one of the options.")
+        else:
+            break
     point_protocol()
 
 def point_protocol():
     print("----------------------------------------Points Protocol--------------------------------------------------")
     print("You have thrown your dice three times and the result is:", dice_list)
     print("You are able to chooce these options for your dices:")
+    i = 1
     if 1 in dice_list:
         print("Option 1 is the total value of you ones.")
     if 2 in dice_list:
@@ -101,6 +106,12 @@ def point_protocol():
     if 6 in dice_list:
         print("Option 6 is the total value of you sixes.")
     print("Option 7 is the total value of all your dices.")
+    while i < 6:
+        if dice_list.count(i) >= 2:
+            print("Option 8 is the total value of one of your pairs.")
+            break
+        else:
+            i += 1
     choice_of_pointsline = input("What is your prefered option?: ")
     if (choice_of_pointsline == "1" and 1 in dice_list):
         points_for_round = dice_list.count(1)
@@ -117,7 +128,12 @@ def point_protocol():
     elif choice_of_pointsline == "7":
         points_for_round = sum(dice_list)
     elif choice_of_pointsline == "8":
-        print("Not done")
+        while i <= 6:
+            if dice_list.count(i) >= 2:
+                points_for_round = i*2
+                break
+            else:
+                i += 1
 
     players_previous_points = players.get(current_player)
     players_total_points = players_previous_points + points_for_round
