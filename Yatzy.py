@@ -11,11 +11,19 @@ def dice(): # tärningen
 
 def dice_choice(): # Denna funktion tar användarens inmatning för att bestämma vilka tärningar som ska kastas om. Den tar bort de valda tärningarna från listan, kastar om dem och visar resultatet för användaren.
     global amount_dice
-    rerolling_dice = input("Which dice/dices would you like to throw again?: ")
-    rerolling_dice_list = rerolling_dice.split() # Dela upp användarens inmatning i en lista av tärningsnummer.
-    for i in range(len(rerolling_dice_list)):
-        dice_value = int(rerolling_dice_list[i]) # Konvertera varje inmatat tärningsnummer till heltal.
-        dice_list.remove(dice_value)
+    while True:
+        try:
+            rerolling_dice = input("Which dice/dices would you like to throw again?: ")
+        except ValueError:
+            print("That is not one of your dice.")
+        rerolling_dice_list = rerolling_dice.split() # Dela upp användarens inmatning i en lista av tärningsnummer. 
+        if len(rerolling_dice_list) < 6:
+            for i in range(len(rerolling_dice_list)):
+                dice_value = int(rerolling_dice_list[i]) # Konvertera varje inmatat tärningsnummer till heltal.
+                dice_list.remove(dice_value)
+            break
+        else:
+            print("You have chosen more dices than you have.")
     amount_dice = len(rerolling_dice_list)
     dice()
     print("Your new dices are:", dice_list)
@@ -60,15 +68,20 @@ def turn():
     print(current_player + " you throw your dice and get these values:")
     dice()
     print(dice_list)
-    for i in range(3):
-        if i < 2:
-            dice_choice_answer = input("If you want to throw some dice again press 1, if not press 2: ") # Användaren uppmanas att ange vilka tärningar de vill kasta om.
-            if dice_choice_answer == "1":
-                dice_choice()
-            elif dice_choice_answer == "2":
-                break
-        else:
+    while True:
+        try:
+            for i in range(3):
+                if i < 2:
+                    dice_choice_answer = input("If you want to throw some dice again press 1, if not press 2: ") # Användaren uppmanas att ange vilka tärningar de vill kasta om.
+                    if dice_choice_answer == "1":
+                        dice_choice()
+                    elif dice_choice_answer == "2":
+                        break
+                else:
+                    break
             break
+        except ValueError:
+            print("That is not one of the options.")
     point_protocol()
 
 def point_protocol():
@@ -89,17 +102,17 @@ def point_protocol():
         print("Option 6 is the total value of you sixes.")
     print("Option 7 is the total value of all your dices.")
     choice_of_pointsline = input("What is your prefered option?: ")
-    if choice_of_pointsline == "1":
+    if (choice_of_pointsline == "1" and 1 in dice_list):
         points_for_round = dice_list.count(1)
-    elif choice_of_pointsline == "2":
+    elif (choice_of_pointsline == "2" and 2 in dice_list):
         points_for_round = 2*dice_list.count(2)
-    elif choice_of_pointsline == "3":
+    elif (choice_of_pointsline == "3" and 3 in dice_list):
         points_for_round = 3*dice_list.count(3)
-    elif choice_of_pointsline == "4":
+    elif (choice_of_pointsline == "4" and 4 in dice_list):
         points_for_round = 4*dice_list.count(4)
-    elif choice_of_pointsline == "5":
+    elif (choice_of_pointsline == "5" and 5 in dice_list):
         points_for_round = 5*dice_list.count(5)
-    elif choice_of_pointsline == "6":
+    elif (choice_of_pointsline == "6" and 6 in dice_list):
         points_for_round = 6*dice_list.count(6)
     elif choice_of_pointsline == "7":
         points_for_round = sum(dice_list)
