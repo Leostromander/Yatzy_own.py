@@ -134,6 +134,8 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
                 break
             else:
                 i += 1
+    else:
+        print("That is not a valid choice. You will not get any points for that.")
 
     players_previous_points = players.get(current_player)
     players_total_points = players_previous_points + points_for_round
@@ -142,7 +144,7 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
 
 player_selection()
 
-for i in range(3*number_of_players): #Ser till att det spelas tre runder.
+for _ in range(3*number_of_players): #Ser till att det spelas tre runder.
     turn()
     if time == number_of_players:
         time = 0
