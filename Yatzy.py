@@ -3,6 +3,7 @@ dice_list = [] # Skapa en tom lista för tärningarna
 points = int(0) # Skapa en variabel för poäng
 time = 0 # Skapa en variabel för vems tur det är
 turn_timer = 0 # Visar vilken tur det är
+protocol_check_dict = {}
 
 def dice(): # tärningen
     for _ in range(amount_dice): #Starta en loop som ska upprepa ett visst antal gånger, bestämt av amount_dice.
@@ -35,6 +36,7 @@ def player_selection(): #Funktionen är till för att välja spelarna.
     players = {}
     global player_id
     player_id = {}
+    i = 0
     time_for_player_selection = 0 #En specifik klocka för att kunna skapa en "tag" på spelaren utan att störa med den globala klockan: "time".
     while True:
         try:
@@ -43,6 +45,12 @@ def player_selection(): #Funktionen är till för att välja spelarna.
                 for _ in range(number_of_players):
                     time_for_player_selection += 1
                     player_tag = ("Player" + str(time_for_player_selection))
+                    print(player_tag)
+                    while i < 9:
+                        i += 1
+                        protocol_check_key = player_tag + str(i)
+                        protocol_check_dict.update({protocol_check_key: 1})
+                    print(protocol_check_dict)
                     while True:
                         name = input("What is your name?: ")
                         if players.get(name) == 0: #Om namnet redan har skrivits betyder det att den har blivit tilldelad poäng vilket alltid har värdet 0. 
@@ -58,6 +66,7 @@ def player_selection(): #Funktionen är till för att välja spelarna.
             print("That is not an appropriate character.")
 
 def turn(): #main funktionen som använder alla andra funktioner.
+    print(protocol_check_dict)
     dice_list.clear()
     global amount_dice
     amount_dice = 5 # Ange antalet tärningar
@@ -93,7 +102,7 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
     print("You have thrown your dice three times and the result is:", dice_list)
     print("You are able to chooce these options for your dices:")
     i = 1
-    if 1 in dice_list:
+    if (1 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "1") == 1):
         print("Option 1 is the total value of you ones.")
     if 2 in dice_list:
         print("Option 2 is the total value of you twos.")
@@ -109,33 +118,54 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
     while i < 6:
         if dice_list.count(i) >= 2:
             print("Option 8 is the total value of one of your pairs.")
+            i = 1
             break
         else:
             i += 1
-    choice_of_pointsline = input("What is your prefered option?: ")
-    if (choice_of_pointsline == "1" and 1 in dice_list):
-        points_for_round = dice_list.count(1)
-    elif (choice_of_pointsline == "2" and 2 in dice_list):
-        points_for_round = 2*dice_list.count(2)
-    elif (choice_of_pointsline == "3" and 3 in dice_list):
-        points_for_round = 3*dice_list.count(3)
-    elif (choice_of_pointsline == "4" and 4 in dice_list):
-        points_for_round = 4*dice_list.count(4)
-    elif (choice_of_pointsline == "5" and 5 in dice_list):
-        points_for_round = 5*dice_list.count(5)
-    elif (choice_of_pointsline == "6" and 6 in dice_list):
-        points_for_round = 6*dice_list.count(6)
-    elif choice_of_pointsline == "7":
-        points_for_round = sum(dice_list)
-    elif choice_of_pointsline == "8":
-        while i <= 6:
-            if dice_list.count(i) >= 2:
-                points_for_round = i*2
-                break
-            else:
-                i += 1
-    else:
-        print("That is not a valid choice. You will not get any points for that.")
+    numbers_protocol = [1, 2, 3, 4, 5, 6]
+    while True:
+        choice_of_pointsline = input("What is your prefered option?: ")
+        print(("Player" + str(time)) + "1")
+        print(protocol_check_dict.get( ("Player" + str(time)) + "1"))
+        if (choice_of_pointsline == "1" and 1 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "1") == 1):
+            points_for_round = dice_list.count(1)
+            protocol_check_dict.update({(("Player" + str(time)) + "1"): 0})
+            break
+        elif (choice_of_pointsline == "2" and 2 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "2") == 1):
+            points_for_round = 2*dice_list.count(2)
+            protocol_check_dict.update({(("Player" + str(time)) + "2"): 0})
+            break
+        elif (choice_of_pointsline == "3" and 3 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "3") == 1):
+            points_for_round = 3*dice_list.count(3)
+            protocol_check_dict.update({(("Player" + str(time)) + "3"): 0})
+            break
+        elif (choice_of_pointsline == "4" and 4 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "4") == 1):
+            points_for_round = 4*dice_list.count(4)
+            protocol_check_dict.update({(("Player" + str(time)) + "4"): 0})
+            break
+        elif (choice_of_pointsline == "5" and 5 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "5") == 1):
+            points_for_round = 5*dice_list.count(5)
+            protocol_check_dict.update({(("Player" + str(time)) + "5"): 0})
+            break
+        elif (choice_of_pointsline == "6" and 6 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "6") == 1):
+            points_for_round = 6*dice_list.count(6)
+            protocol_check_dict.update({(("Player" + str(time)) + "6"): 0})
+            break
+        elif (choice_of_pointsline == "7" and protocol_check_dict.get(("Player" + str(time)) + "7") == 1):
+            points_for_round = sum(dice_list)
+            protocol_check_dict.update({(("Player" + str(time)) + "7"): 0})
+            break
+        elif (choice_of_pointsline == "8" and protocol_check_dict.get(("Player" + str(time)) + "8") == 1):
+            while i <= 6:
+                if dice_list.count(i) >= 2:
+                    points_for_round = i*2
+                    break
+                else:
+                    i += 1
+            protocol_check_dict.update({(("Player" + str(time)) + "8"): 0})
+            break
+        else:
+            print("That is not a valid choice.")
 
     players_previous_points = players.get(current_player)
     players_total_points = players_previous_points + points_for_round
