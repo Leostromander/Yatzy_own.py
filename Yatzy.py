@@ -9,26 +9,27 @@ def dice(): # tärningen
     for _ in range(amount_dice): #Starta en loop som ska upprepa ett visst antal gånger, bestämt av amount_dice.
         dice_throw = random.randint(1,6) # Slå en tärning och lagra resultatet i dice_throw
         dice_list.append(dice_throw) # Lägg till resultatet i listan dice_list
+    dice_list.sort()
 
 def dice_choice(): # Denna funktion tar användarens inmatning för att bestämma vilka tärningar som ska kastas om. Den tar bort de valda tärningarna från listan, kastar om dem och visar resultatet för användaren.
     global amount_dice #"global" är en status på en variabel som betyder att den har samma värde överallt i programmet.
     while True:
         try:
             rerolling_dice = input("Which dice/dices would you like to throw again?: ")
+            rerolling_dice_list = rerolling_dice.split() # Dela upp användarens inmatning i en lista av tärningsnummer. 
+            if len(rerolling_dice_list) < 6:
+                for i in range(len(rerolling_dice_list)):
+                    dice_value = int(rerolling_dice_list[i]) # Konvertera varje inmatat tärningsnummer till heltal.
+                    dice_list.remove(dice_value)
+                break
+            else:
+                print("You have chosen more dices than you have.")
+                break
         except ValueError:
-            print("That is not one of your dice.")
-        rerolling_dice_list = rerolling_dice.split() # Dela upp användarens inmatning i en lista av tärningsnummer. 
-        if len(rerolling_dice_list) < 6:
-            for i in range(len(rerolling_dice_list)):
-                dice_value = int(rerolling_dice_list[i]) # Konvertera varje inmatat tärningsnummer till heltal.
-                dice_list.remove(dice_value)
-            break
-        else:
-            print("You have chosen more dices than you have.")
+            print("You do not have does dice/dices.")
     amount_dice = len(rerolling_dice_list)
     dice()
     print("Your new dices are:", dice_list)
-    return dice_list
 
 def player_selection(): #Funktionen är till för att välja spelarna.
     global number_of_players
@@ -45,7 +46,7 @@ def player_selection(): #Funktionen är till för att välja spelarna.
                     i = 0
                     time_for_player_selection += 1
                     player_tag = ("Player" + str(time_for_player_selection))
-                    while i < 8:
+                    while i < 9:
                         i += 1
                         protocol_check_key = player_tag + str(i)
                         protocol_check_dict.update({protocol_check_key: 1})
@@ -73,31 +74,34 @@ def turn(): #main funktionen som använder alla andra funktioner.
     if time == 1:
         turn_timer += 1
     global current_player
+    i = 0
     current_player = player_id.get("Player" + str(time)) #Använder spelarens "tag" för att hitta och definera namnet på den nuvarande spelaren.
     print("----------------------------------------Turn " + str(turn_timer) + "----" + current_player + "------------------------------------------------------")
     print(current_player + " you throw your dice and get these values:")
     dice()
     print(dice_list)
     for i in range(3):
-        if i < 2:
             while True:
+                if i > 1:
+                    print("You have thrown three times.")
+                    break
                 dice_choice_answer = input("If you want to throw some dice again press 1, if not press 2: ") # Användaren uppmanas att ange vilka tärningar de vill kasta om.
                 if dice_choice_answer == "1":
                     dice_choice()
+                    i += 1
                 elif dice_choice_answer == "2":
                     break
                 else:
                     print("That is not an option.")
             break
-        else:
-            break
     point_protocol()
 
 def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att fördela poäng.
+    numbers_protocol = [1, 2, 3, 4, 5, 6]
     print("----------------------------------------Points Protocol--------------------------------------------------")
     print("You have thrown your dice three times and the result is:", dice_list)
     print("You are able to chooce these options for your dices:")
-    i = 1
+    i = 6
     if (1 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "1") == 1):
         print("Option 1 is the total value of you ones.")
     if (2 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "2") == 1):
@@ -113,14 +117,17 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
     if protocol_check_dict.get(("Player" + str(time)) + "7") == 1: 
         print("Option 7 is the total value of all your dices.")
     if protocol_check_dict.get(("Player" + str(time)) + "8") == 1:
-        while i < 6:
+        while i > 1:
             if dice_list.count(i) >= 2:
-                print("Option 8 is the total value of one of your pairs.")
-                i = 1
+                print("Option 8 is the total value of your highest pair.")
+                i = 6
                 break
             else:
-                i += 1
-    numbers_protocol = [1, 2, 3, 4, 5, 6]
+                i -= 1
+    if (protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[2] and dice_list[3] == dice_list[4]):
+        print("Option 9 is a full house, worth 25 points.")
+    elif (protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[1] and dice_list[2] == dice_list[4]):
+        print("Option 9 is a full house, worth 25 points.")
     while True:
         try:
             choice_of_pointsline = input("What is your prefered option?: ")
@@ -133,13 +140,19 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
                 protocol_check_dict.update({(("Player" + str(time)) + choice_of_pointsline): 0})
                 break
             elif (choice_of_pointsline == "8" and protocol_check_dict.get(("Player" + str(time)) + choice_of_pointsline) == 1):
-                while i <= 6:
+                while i > 1:
                     if dice_list.count(i) >= 2:
                         points_for_round = i*2
                         break
                     else:
-                        i += 1
+                        i -= 1
                 protocol_check_dict.update({(("Player" + str(time)) + choice_of_pointsline): 0})
+                break
+            elif (choice_of_pointsline == "9" and protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[2] and dice_list[3] == dice_list[4]):
+                points_for_round = 25
+                break
+            elif (choice_of_pointsline == "9" and protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[1] and dice_list[2] == dice_list[4]):
+                points_for_round = 25
                 break
             elif protocol_check_dict.get(("Player" + str(time)) + choice_of_pointsline) == 0:
                 print("You have already selected that choice.")
