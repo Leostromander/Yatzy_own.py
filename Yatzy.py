@@ -46,7 +46,7 @@ def player_selection(): #Funktionen är till för att välja spelarna.
                     i = 0
                     time_for_player_selection += 1
                     player_tag = ("Player" + str(time_for_player_selection))
-                    while i < 9:
+                    while i < 10:
                         i += 1
                         protocol_check_key = player_tag + str(i)
                         protocol_check_dict.update({protocol_check_key: 1})
@@ -125,9 +125,12 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
             else:
                 i -= 1
     if (protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[2] and dice_list[3] == dice_list[4]):
-        print("Option 9 is a full house, worth 25 points.")
+        print("Option 9 is a full house, worth the total value of your dice.")
     elif (protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[1] and dice_list[2] == dice_list[4]):
-        print("Option 9 is a full house, worth 25 points.")
+        print("Option 9 is a full house, worth the total value of your dice.")
+    if (protocol_check_dict.get(("Player" + str(time)) + "10") == 1 and dice_list[0] == dice_list[4]):
+        print("Option 10 is Yatzy worth 50 points.")
+    
     while True:
         try:
             choice_of_pointsline = input("What is your prefered option?: ")
@@ -149,10 +152,13 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
                 protocol_check_dict.update({(("Player" + str(time)) + choice_of_pointsline): 0})
                 break
             elif (choice_of_pointsline == "9" and protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[2] and dice_list[3] == dice_list[4]):
-                points_for_round = 25
+                points_for_round = sum(dice_list)
                 break
             elif (choice_of_pointsline == "9" and protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[1] and dice_list[2] == dice_list[4]):
-                points_for_round = 25
+                points_for_round = sum(dice_list)
+                break
+            elif (choice_of_pointsline == "10" and protocol_check_dict.get(("Player" + str(time)) + "10") == 1 and dice_list[0] == dice_list[4]):
+                points_for_round = 50
                 break
             elif protocol_check_dict.get(("Player" + str(time)) + choice_of_pointsline) == 0:
                 print("You have already selected that choice.")
@@ -165,12 +171,12 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
     players_total_points = players_previous_points + points_for_round
     players.update({current_player: players_total_points})
     print(current_player + " you now have " + str(players_total_points) + " points.")
-
 player_selection()
 
 for _ in range(3*number_of_players): #Ser till att det spelas tre runder.
     turn()
     if time == number_of_players:
         time = 0
+print("And the winner is: " + max(players, key = players.get))
 
 print(players)
