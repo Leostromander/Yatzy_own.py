@@ -17,14 +17,13 @@ def dice_choice(): # Denna funktion tar användarens inmatning för att bestämm
         try:
             rerolling_dice = input("Which dice/dices would you like to throw again?: ")
             rerolling_dice_list = rerolling_dice.split() # Dela upp användarens inmatning i en lista av tärningsnummer. 
-            if len(rerolling_dice_list) < 6:
+            if len(rerolling_dice_list) < 6: # Om man har skrivit korrekt antal tärningar
                 for i in range(len(rerolling_dice_list)):
                     dice_value = int(rerolling_dice_list[i]) # Konvertera varje inmatat tärningsnummer till heltal.
                     dice_list.remove(dice_value)
                 break
             else:
                 print("You have chosen more dices than you have.")
-                break
         except ValueError:
             print("You do not have does dice/dices.")
     amount_dice = len(rerolling_dice_list)
@@ -45,8 +44,8 @@ def player_selection(): #Funktionen är till för att välja spelarna.
                 for _ in range(number_of_players):
                     i = 0
                     time_for_player_selection += 1
-                    player_tag = ("Player" + str(time_for_player_selection))
-                    while i < 10:
+                    player_tag = ("Player" + str(time_for_player_selection)) #Skapar en nyckel som sedan kan användas för att nå spelarens namn
+                    while i < 10: #Skapar en dictionary där spelare + number på poäng protocolen, för att avgöra om spelaren har valt alternativet någon gång.
                         i += 1
                         protocol_check_key = player_tag + str(i)
                         protocol_check_dict.update({protocol_check_key: 1})
@@ -67,7 +66,7 @@ def player_selection(): #Funktionen är till för att välja spelarna.
 def turn(): #main funktionen som använder alla andra funktioner.
     dice_list.clear()
     global amount_dice
-    amount_dice = 5 # Ange antalet tärningar
+    amount_dice = 5 # Anger antalet tärningar
     global time
     time += 1
     global turn_timer
@@ -97,11 +96,12 @@ def turn(): #main funktionen som använder alla andra funktioner.
     point_protocol()
 
 def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att fördela poäng.
-    numbers_protocol = [1, 2, 3, 4, 5, 6]
+    numbers_protocol = (1, 2, 3, 4, 5, 6) #Skapar en tuple för att avgöra om deras val är mellan 1-6.
     print("----------------------------------------Points Protocol--------------------------------------------------")
     print("You have thrown your dice three times and the result is:", dice_list)
     print("You are able to chooce these options for your dices:")
     i = 6
+    #Visar bara alternativ som spelaren kan ta.
     if (1 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "1") == 1):
         print("Option 1 is the total value of you ones.")
     if (2 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "2") == 1):
@@ -133,6 +133,7 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
     
     while True:
         try:
+            #Ger poäng
             choice_of_pointsline = input("What is your prefered option?: ")
             if (int(choice_of_pointsline) in numbers_protocol and protocol_check_dict.get(("Player" + str(time)) + choice_of_pointsline)):
                 points_for_round = int(choice_of_pointsline)*dice_list.count(int(choice_of_pointsline))
@@ -166,7 +167,7 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
                 print("That is not a valid choice.")
         except ValueError:
             print("That is not a valid choice.")
-
+    #Lägger in poängen i spelarnas dictionary och ger spelaren deras nya totala poäng.
     players_previous_points = players.get(current_player)
     players_total_points = players_previous_points + points_for_round
     players.update({current_player: players_total_points})
