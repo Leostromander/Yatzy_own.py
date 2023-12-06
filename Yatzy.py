@@ -178,6 +178,9 @@ for _ in range(3*number_of_players): #Ser till att det spelas tre runder.
     turn()
     if time == number_of_players:
         time = 0
+#"Max" används för identifiera det högsta värdet.
+#"players" används för att förtydliga att man vill leta i "player" dictionary:n.
+#"key = player.get" omvandlar värdena till integers eftersom värdet på strings fungerar annorlunda än integers.
 print("And the winner is: " + max(players, key = players.get))
 
 print(players)
