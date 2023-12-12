@@ -18,8 +18,8 @@ def dice_choice(): # Denna funktion tar användarens inmatning för att bestämm
             rerolling_dice = input("Which dice/dices would you like to throw again?: ")
             rerolling_dice_list = rerolling_dice.split() # Dela upp användarens inmatning i en lista av tärningsnummer. 
             if len(rerolling_dice_list) < 6:
-                for i in range(len(rerolling_dice_list)):
-                    dice_value = int(rerolling_dice_list[i]) # Konvertera varje inmatat tärningsnummer till heltal.
+                for dices in range(len(rerolling_dice_list)):
+                    dice_value = int(rerolling_dice_list[dices]) # Konvertera varje inmatat tärningsnummer till heltal.
                     dice_list.remove(dice_value)
                 break
             else:
@@ -145,7 +145,7 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
                     else:
                         i -= 1
                 break
-            elif (choice_of_pointsline == "9" and protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and (dice_list[0] == dice_list[2] and dice_list[3] == dice_list[4] or dice_list[0] == dice_list[1] and dice_list[2] == dice_list[4])):
+            elif (choice_of_pointsline == "9" and protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and (dice_list[0] == dice_list[2] and dice_list[3] == dice_list[4] or dice_list[0] == dice_list[1] and dice_list[2] == dice_list[4] and dice_list[0] != dice_list[4])):
                 points_for_round = sum(dice_list)
                 break
             elif (choice_of_pointsline == "10" and protocol_check_dict.get(("Player" + str(time)) + "10") == 1 and dice_list[0] == dice_list[4]):

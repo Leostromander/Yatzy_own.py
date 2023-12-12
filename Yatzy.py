@@ -42,12 +42,12 @@ def player_selection(): #Funktionen är till för att välja spelarna.
             number_of_players = int(input("How many players are there? (Choose between 2 and 4): "))
             if (number_of_players >= 2 and number_of_players <= 4):
                 for _ in range(number_of_players):
-                    i = 0
+                    points_protocol_tags = 0
                     time_for_player_selection += 1
                     player_tag = ("Player" + str(time_for_player_selection)) #Skapar en nyckel som sedan kan användas för att nå spelarens namn
-                    while i < 10: #Skapar en dictionary där spelare + number på poäng protocolen, för att avgöra om spelaren har valt alternativet någon gång.
-                        i += 1
-                        protocol_check_key = player_tag + str(i)
+                    while points_protocol_tags < 10: #Skapar en dictionary där spelare + number på poäng protocolen, för att avgöra om spelaren har valt alternativet någon gång.
+                        points_protocol_tags += 1
+                        protocol_check_key = player_tag + str(points_protocol_tags)
                         protocol_check_dict.update({protocol_check_key: 1})
                     while True:
                         name = input("What is your name?: ")
@@ -73,21 +73,21 @@ def turn(): #main funktionen som använder alla andra funktioner.
     if time == 1:
         turn_timer += 1
     global current_player
-    i = 0
+    times_dice_thrown = 0
     current_player = player_id.get("Player" + str(time)) #Använder spelarens "tag" för att hitta och definera namnet på den nuvarande spelaren.
     print("----------------------------------------Turn " + str(turn_timer) + "----" + current_player + "------------------------------------------------------")
     print(current_player + " you throw your dice and get these values:")
     dice()
     print(dice_list)
-    for i in range(3):
+    for times_dice_thrown in range(3):
             while True:
-                if i > 1:
+                if times_dice_thrown > 1:
                     print("You have thrown three times.")
                     break
                 dice_choice_answer = input("If you want to throw some dice again press 1, if not press 2: ") # Användaren uppmanas att ange vilka tärningar de vill kasta om.
                 if dice_choice_answer == "1":
                     dice_choice()
-                    i += 1
+                    times_dice_thrown += 1
                 elif dice_choice_answer == "2":
                     break
                 else:
@@ -100,7 +100,7 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
     print("----------------------------------------Points Protocol--------------------------------------------------")
     print("You have thrown your dice three times and the result is:", dice_list)
     print("You are able to chooce these options for your dices:")
-    i = 6
+    pair_identification = 6
     #Visar bara alternativ som spelaren kan ta.
     if (1 in dice_list and protocol_check_dict.get(("Player" + str(time)) + "1") == 1):
         print("Option 1 is the total value of you ones.")
@@ -117,13 +117,13 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
     if protocol_check_dict.get(("Player" + str(time)) + "7") == 1: 
         print("Option 7 is the total value of all your dices.")
     if protocol_check_dict.get(("Player" + str(time)) + "8") == 1:
-        while i > 1:
-            if dice_list.count(i) >= 2:
+        while pair_identification > 1:
+            if dice_list.count(pair_identification) >= 2:
                 print("Option 8 is the total value of your highest pair.")
-                i = 6
+                pair_identification = 6
                 break
             else:
-                i -= 1
+                pair_identification -= 1
     if (protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[2] and dice_list[3] == dice_list[4]):
         print("Option 9 is a full house, worth the total value of your dice.")
     elif (protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[1] and dice_list[2] == dice_list[4]):
@@ -144,12 +144,12 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
                 protocol_check_dict.update({(("Player" + str(time)) + choice_of_pointsline): 0})
                 break
             elif (choice_of_pointsline == "8" and protocol_check_dict.get(("Player" + str(time)) + choice_of_pointsline) == 1):
-                while i > 1:
-                    if dice_list.count(i) >= 2:
-                        points_for_round = i*2
+                while pair_identification > 1:
+                    if dice_list.count(pair_identification) >= 2:
+                        points_for_round = pair_identification*2
                         break
                     else:
-                        i -= 1
+                        pair_identification -= 1
                 protocol_check_dict.update({(("Player" + str(time)) + choice_of_pointsline): 0})
                 break
             elif (choice_of_pointsline == "9" and protocol_check_dict.get(("Player" + str(time)) + "9") == 1 and dice_list[0] == dice_list[2] and dice_list[3] == dice_list[4]):
@@ -172,15 +172,17 @@ def point_protocol(): #Funktionen som använder Yatzys poäng protocol för att 
     players_total_points = players_previous_points + points_for_round
     players.update({current_player: players_total_points})
     print(current_player + " you now have " + str(players_total_points) + " points.")
-player_selection()
 
-for _ in range(3*number_of_players): #Ser till att det spelas tre runder.
-    turn()
-    if time == number_of_players:
-        time = 0
-#"Max" används för identifiera det högsta värdet.
-#"players" används för att förtydliga att man vill leta i "player" dictionary:n.
-#"key = player.get" omvandlar värdena till integers eftersom värdet på strings fungerar annorlunda än integers.
-print("And the winner is: " + max(players, key = players.get))
+def main():
+    player_selection()
+    for _ in range(3*number_of_players): #Ser till att det spelas tre runder.
+        turn()
+        if time == number_of_players:
+            time = 0
+    #"Max" används för identifiera det högsta värdet.
+    #"players" används för att förtydliga att man vill leta i "player" dictionary:n.
+    #"key = player.get" omvandlar värdena till integers eftersom värdet på strings fungerar annorlunda än integers.
+    print("And the winner is: " + max(players, key = players.get))
 
-print(players)
+    print(players)
+main()
